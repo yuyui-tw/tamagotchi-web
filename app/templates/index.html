@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>電子雞</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
+  </head>
+  <body>
+    <main>
+      <h1>我的電子雞</h1>
+      <p id="message" aria-live="polite">正在讀取寵物狀態……</p>
+      <section aria-label="寵物狀態">
+        <p>飽食度：<span id="hunger">--</span></p>
+        <p>心情：<span id="mood">--</span></p>
+        <p>體力：<span id="energy">--</span></p>
+        <p>清潔度：<span id="cleanliness">--</span></p>
+      </section>
+      <section class="actions" aria-label="照顧寵物">
+        <button data-action="feed">餵食</button>
+        <button data-action="play">玩耍</button>
+        <button data-action="sleep">睡覺</button>
+        <button data-action="clean">清潔</button>
+      </section>
+    </main>
+  </body>
+</html>

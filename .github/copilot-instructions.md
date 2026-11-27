@@ -9,7 +9,7 @@
 - 前端用原生 JS（ES modules），不要引入 npm、打包工具或前端框架。
 - 不使用任何需要網路的服務、CDN 或外部 API；資源皆放在 `app/static/`。
 - 所有數值限制在 0–100，使用 `clamp()`。
-- 時間補算以 `time.time()` 的秒數差計算，上限 24 小時。
+- 時間補算以 `time.time()` 的秒數差計算；`DECAY_INTERVAL_SECONDS` 預設 30，正式版改為 3600；最多補算 24 個間隔。
 - 新增邏輯必須附 pytest 測試於 `tests/`。
 - 型別標註必須完整；本機 Ruff 安裝與檢查暫緩，後續處理；CI 保留 Ruff 檢查。
 - 程式碼註解與 commit 訊息使用繁體中文；變數與函式名用英文 snake_case。
@@ -22,6 +22,8 @@
 - 檢查：`pytest`（Ruff 由 CI 執行）
 
 ## API 約定
-- GET  /api/pet → 回傳目前寵物狀態（已補算）
+- GET  /api/pet → 回傳補算後狀態及 `status`
 - POST /api/pet/action，body: {"action": "feed|play|sleep|clean"}
-- 回應一律 JSON：{"name","hunger","mood","energy","cleanliness","stage","updated_at"}
+- 四項數值為 0–100；各衰減間隔分別減飽食度 5、心情 2、體力 1、清潔度 3。
+- 主要數值滿 100 時操作回傳原狀態；API 回應包含 `status`、`delta`、`effective`、`message`。
+- 前端以文字輸入操作並顯示文字對話，不使用圖像或狀態條。

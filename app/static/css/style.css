@@ -29,3 +29,17 @@ button {
   color: inherit;
   cursor: pointer;
 }
+
+input {
+  min-width: 12rem;
+  padding: 0.55rem;
+  border: 1px solid #b8a987;
+  border-radius: 0.4rem;
+  font: inherit;
+}
+
+button:disabled,
+input:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}

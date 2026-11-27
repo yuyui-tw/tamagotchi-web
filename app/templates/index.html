@@ -16,12 +16,17 @@
         <p>心情：<span id="mood">--</span></p>
         <p>體力：<span id="energy">--</span></p>
         <p>清潔度：<span id="cleanliness">--</span></p>
+        <p>狀態：<span id="status">--</span></p>
       </section>
-      <section class="actions" aria-label="照顧寵物">
-        <button data-action="feed">餵食</button>
-        <button data-action="play">玩耍</button>
-        <button data-action="sleep">睡覺</button>
-        <button data-action="clean">清潔</button>
+      <section aria-label="文字交流">
+        <h2>對話</h2>
+        <ol id="conversation" aria-live="polite" aria-relevant="additions"></ol>
+        <p>可輸入：餵食、玩耍、睡覺、清潔</p>
+        <form id="command-form">
+          <label for="command">輸入操作</label>
+          <input id="command" name="command" autocomplete="off" required>
+          <button type="submit">送出</button>
+        </form>
       </section>
     </main>
   </body>

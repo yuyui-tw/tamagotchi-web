@@ -3,7 +3,7 @@ import time
 from dataclasses import replace
 from pathlib import Path
 
-from app.pet import Pet, decay
+from app.pet import DEFAULT_DECAY_INTERVAL, MAX_DECAY_STEPS, Pet, decay
 
 DEFAULT_DATABASE = Path(__file__).resolve().parent.parent / "data" / "pet.db"
 
@@ -21,10 +21,37 @@ def init_db(database_path: Path = DEFAULT_DATABASE) -> None:
                 energy INTEGER NOT NULL,
                 cleanliness INTEGER NOT NULL,
                 stage TEXT NOT NULL,
-                updated_at REAL NOT NULL
+                updated_at REAL NOT NULL,
+                stats_version INTEGER NOT NULL DEFAULT 1
             )
             """
         )
+        columns = {
+            row[1]
+            for row in connection.execute("PRAGMA table_info(pet)").fetchall()
+        }
+        was_three_level_schema = (
+            "vitality_elapsed" in columns and "stats_version" not in columns
+        )
+        if "stats_version" not in columns:
+            connection.execute(
+                "ALTER TABLE pet ADD COLUMN stats_version INTEGER NOT NULL DEFAULT 1"
+            )
+
+        if was_three_level_schema:
+            for column in ("energy", "mood"):
+                connection.execute(
+                    f"""
+                    UPDATE pet
+                    SET {column} = CASE
+                        WHEN {column} = 1 THEN 33
+                        WHEN {column} = 2 THEN 67
+                        WHEN {column} = 3 THEN 100
+                        ELSE {column}
+                    END
+                    WHERE {column} BETWEEN 0 AND 3
+                    """,
+                )
 
 
 def save_pet(pet: Pet, database_path: Path = DEFAULT_DATABASE) -> None:
@@ -57,7 +84,10 @@ def save_pet(pet: Pet, database_path: Path = DEFAULT_DATABASE) -> None:
 
 
 def load_pet(
-    database_path: Path = DEFAULT_DATABASE, now: float | None = None
+    database_path: Path = DEFAULT_DATABASE,
+    now: float | None = None,
+    interval: int = DEFAULT_DECAY_INTERVAL,
+    max_steps: int = MAX_DECAY_STEPS,
 ) -> Pet:
     current_time = time.time() if now is None else now
     init_db(database_path)
@@ -80,12 +110,16 @@ def load_pet(
         stage=row["stage"],
         updated_at=row["updated_at"],
     )
+    stored_pet = pet
     elapsed_seconds = max(0, current_time - pet.updated_at)
-    if elapsed_seconds > 86400:
-        pet = replace(decay(pet, 86400), updated_at=current_time)
+    if elapsed_seconds > interval * max_steps:
+        pet = replace(
+            decay(pet, elapsed_seconds, interval, max_steps),
+            updated_at=current_time,
+        )
     else:
-        pet = decay(pet, elapsed_seconds)
+        pet = decay(pet, elapsed_seconds, interval, max_steps)
 
-    if pet.updated_at != row["updated_at"] or elapsed_seconds > 86400:
+    if pet != stored_pet:
         save_pet(pet, database_path)
     return pet

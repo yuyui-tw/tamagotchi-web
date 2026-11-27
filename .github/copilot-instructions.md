@@ -11,7 +11,7 @@
 - 所有數值限制在 0–100，使用 `clamp()`。
 - 時間補算以 `time.time()` 的秒數差計算，上限 24 小時。
 - 新增邏輯必須附 pytest 測試於 `tests/`。
-- 型別標註必須完整；格式化用 ruff。
+- 型別標註必須完整；本機 Ruff 安裝與檢查暫緩，後續處理；CI 保留 Ruff 檢查。
 - 程式碼註解與 commit 訊息使用繁體中文；變數與函式名用英文 snake_case。
 - 不要提交 `.venv/`、`data/`、`*.db`、`__pycache__/`。
 
@@ -19,7 +19,7 @@
 - 安裝：`pip install -r requirements-dev.txt`
 - 執行：`python run.py`
 - 測試：`pytest`
-- 檢查：`ruff check . && ruff format --check .`
+- 檢查：`pytest`（Ruff 由 CI 執行）
 
 ## API 約定
 - GET  /api/pet → 回傳目前寵物狀態（已補算）

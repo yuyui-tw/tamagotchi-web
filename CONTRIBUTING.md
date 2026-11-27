@@ -24,8 +24,10 @@
 ## 日常流程
 1. 從最新的 `main` 建立功能或修正分支。
 2. 小步提交，訊息格式：`feat: 新增餵食功能`（feat/fix/docs/test/refactor/chore）。
-3. 本機通過 `pytest` 與 `ruff` 後推送分支。
+3. 本機通過 `pytest` 後，透過 GitHub 推送分支；Ruff 本機安裝暫緩，CI 仍會執行 Ruff 檢查。
 4. 開 Pull Request，等待 GitHub Actions 檢查通過與適當審核，再合併。
+
+> TODO：之後處理本機 Ruff 的安裝與檢查流程。
 
 ## GitHub 設定建議
 - Branch protection 對 `main` 要求 Pull Request 與 CI 通過；審核人數依共編情況設定。
